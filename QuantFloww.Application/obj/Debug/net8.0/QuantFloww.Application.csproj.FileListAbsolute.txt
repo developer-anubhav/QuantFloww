@@ -1,0 +1,15 @@
+C:\Code\QuantFloww\QuantFloww.Application\bin\Debug\net8.0\QuantFloww.Application.deps.json
+C:\Code\QuantFloww\QuantFloww.Application\bin\Debug\net8.0\QuantFloww.Application.dll
+C:\Code\QuantFloww\QuantFloww.Application\bin\Debug\net8.0\QuantFloww.Application.pdb
+C:\Code\QuantFloww\QuantFloww.Application\bin\Debug\net8.0\QuantFloww.Domain.dll
+C:\Code\QuantFloww\QuantFloww.Application\bin\Debug\net8.0\QuantFloww.Domain.pdb
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFloww.Application.csproj.AssemblyReference.cache
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFloww.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFloww.Application.AssemblyInfoInputs.cache
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFloww.Application.AssemblyInfo.cs
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFloww.Application.csproj.CoreCompileInputs.cache
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFlo.3898063C.Up2Date
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFloww.Application.dll
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\refint\QuantFloww.Application.dll
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFloww.Application.pdb
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\ref\QuantFloww.Application.dll

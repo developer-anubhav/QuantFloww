@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="QuantFloww.API/QuantFloww.API.csproj" />
+  <Project Path="QuantFloww.Application/QuantFloww.Application.csproj" />
+  <Project Path="QuantFloww.Domain/QuantFloww.Domain.csproj" />
+  <Project Path="QuantFloww.Infrastructure/QuantFloww.Infrastructure.csproj" />
+</Solution>

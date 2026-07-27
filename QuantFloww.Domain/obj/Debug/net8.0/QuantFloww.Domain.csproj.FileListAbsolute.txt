@@ -1,0 +1,11 @@
+C:\Code\QuantFloww\QuantFloww.Domain\bin\Debug\net8.0\QuantFloww.Domain.deps.json
+C:\Code\QuantFloww\QuantFloww.Domain\bin\Debug\net8.0\QuantFloww.Domain.dll
+C:\Code\QuantFloww\QuantFloww.Domain\bin\Debug\net8.0\QuantFloww.Domain.pdb
+C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\QuantFloww.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\QuantFloww.Domain.AssemblyInfoInputs.cache
+C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\QuantFloww.Domain.AssemblyInfo.cs
+C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\QuantFloww.Domain.csproj.CoreCompileInputs.cache
+C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\QuantFloww.Domain.dll
+C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\refint\QuantFloww.Domain.dll
+C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\QuantFloww.Domain.pdb
+C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\ref\QuantFloww.Domain.dll
