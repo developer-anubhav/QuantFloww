@@ -6,10 +6,11 @@ import { logout } from './store/slices/authSlice';
 import { Dashboard } from './pages/Dashboard';
 import { StockDetails } from './pages/StockDetails';
 import { Watchlists } from './pages/Watchlists';
+import { Portfolio } from './pages/Portfolio';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { DarkModeToggle } from './components/DarkModeToggle';
-import { LayoutDashboard, Star, User, LogOut } from 'lucide-react';
+import { LayoutDashboard, Star, Briefcase, User, LogOut } from 'lucide-react';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -59,6 +60,13 @@ function App() {
               >
                 <Star className="w-4 h-4 text-amber-500" />
                 Watchlists
+              </Link>
+              <Link
+                to="/portfolio"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800/30 transition-all"
+              >
+                <Briefcase className="w-4 h-4 text-blue-500" />
+                Portfolio
               </Link>
             </nav>
           </div>
@@ -117,6 +125,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/portfolio"
+            element={
+              <ProtectedRoute>
+                <Portfolio />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="*" element={<Navigate to="/" replace />} />
@@ -132,6 +148,7 @@ function App() {
           <div className="flex gap-4">
             <Link to="/" className="hover:underline">Dashboard</Link>
             <Link to="/watchlists" className="hover:underline">Watchlists</Link>
+            <Link to="/portfolio" className="hover:underline">Portfolio</Link>
           </div>
         </div>
       </footer>

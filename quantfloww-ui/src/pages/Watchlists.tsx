@@ -314,7 +314,7 @@ export const Watchlists: React.FC = () => {
                     })}
                     {activeWatchlist.items.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="p-6 text-center text-zinc-500 dark:text-zinc-550">
+                        <td colSpan={5} className="p-6 text-center text-zinc-500 dark:text-zinc-400">
                           This watchlist has no stocks. Navigate to Dashboard to add some!
                         </td>
                       </tr>
@@ -324,8 +324,8 @@ export const Watchlists: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl p-8 text-center text-zinc-500 dark:text-zinc-550 shadow-sm flex flex-col items-center justify-center min-h-[300px]">
-              <List className="w-12 h-12 text-zinc-400 dark:text-zinc-650 mb-3" />
+            <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl p-8 text-center text-zinc-500 dark:text-zinc-400 shadow-sm flex flex-col items-center justify-center min-h-[300px]">
+              <List className="w-12 h-12 text-zinc-400 dark:text-zinc-500 mb-3" />
               <h3 className="text-base font-bold text-zinc-950 dark:text-zinc-100">No Watchlist Active</h3>
               <p className="text-xs text-zinc-500 mt-1 max-w-sm">
                 Select one from the sidebar or create a new set to monitor custom tickers.

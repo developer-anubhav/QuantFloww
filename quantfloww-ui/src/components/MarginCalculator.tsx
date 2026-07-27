@@ -35,7 +35,7 @@ export const MarginCalculator: React.FC<MarginCalculatorProps> = ({ currentPrice
           <HelpCircle className="w-4 h-4 text-blue-500" />
           Margin & Leverage Calculator
         </h3>
-        <p className="text-xs text-zinc-450 dark:text-zinc-550">
+        <p className="text-xs text-zinc-400 dark:text-zinc-500">
           Analyze trade exposure, margins, and liquidation risk.
         </p>
       </div>
@@ -114,21 +114,21 @@ export const MarginCalculator: React.FC<MarginCalculatorProps> = ({ currentPrice
           
           <div className="space-y-3.5">
             <div className="flex justify-between items-center">
-              <span className="text-[11px] text-zinc-550 dark:text-zinc-450">Total Position Value</span>
+              <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Total Position Value</span>
               <span className="font-mono text-xs font-bold text-zinc-900 dark:text-zinc-100">
                 ₹{positionValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="text-[11px] text-zinc-550 dark:text-zinc-450">Margin Required</span>
+              <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Margin Required</span>
               <span className="font-mono text-xs font-black text-blue-500">
                 ₹{marginRequired.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
 
             <div className="flex justify-between items-center border-t border-zinc-200 dark:border-zinc-800/80 pt-3">
-              <span className="text-[11px] text-zinc-550 dark:text-zinc-450 flex items-center gap-1">
+              <span className="text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
                 <ShieldAlert className="w-3.5 h-3.5 text-rose-500" />
                 Est. Liquidation Price
               </span>

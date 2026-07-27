@@ -51,7 +51,7 @@ export const SectorHeatmap: React.FC<SectorHeatmapProps> = ({ stocks }) => {
     <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm space-y-4">
       <div>
         <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">Market Sector Heatmap</h3>
-        <p className="text-xs text-zinc-400 dark:text-zinc-550">
+        <p className="text-xs text-zinc-400 dark:text-zinc-500">
           Visual representation grouped by sector. Size corresponds to market cap; color represents change.
         </p>
       </div>
@@ -67,7 +67,7 @@ export const SectorHeatmap: React.FC<SectorHeatmapProps> = ({ stocks }) => {
               <span className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
                 {sector.name}
               </span>
-              <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-550">
+              <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500">
                 {(sector.totalCap / 1000000000000).toFixed(2)}T Cr
               </span>
             </div>

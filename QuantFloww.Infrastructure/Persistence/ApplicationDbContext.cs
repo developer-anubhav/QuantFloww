@@ -17,6 +17,9 @@ namespace QuantFloww.Infrastructure.Persistence
         public DbSet<Watchlist> Watchlists => Set<Watchlist>();
         public DbSet<WatchlistItem> WatchlistItems => Set<WatchlistItem>();
         public DbSet<StockEvent> StockEvents => Set<StockEvent>();
+        public DbSet<Portfolio> Portfolios => Set<Portfolio>();
+        public DbSet<PortfolioPosition> PortfolioPositions => Set<PortfolioPosition>();
+        public DbSet<PortfolioTransaction> PortfolioTransactions => Set<PortfolioTransaction>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -93,6 +96,43 @@ namespace QuantFloww.Infrastructure.Persistence
                 entity.HasOne(e => e.Stock)
                     .WithMany(s => s.Events)
                     .HasForeignKey(e => e.StockSymbol)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configure Portfolio
+            modelBuilder.Entity<Portfolio>(entity =>
+            {
+                entity.HasKey(p => p.Id);
+                entity.Property(p => p.UserId).IsRequired().HasMaxLength(450);
+                entity.HasIndex(p => p.UserId).IsUnique();
+                entity.Property(p => p.Balance).HasPrecision(18, 4);
+            });
+
+            // Configure PortfolioPosition
+            modelBuilder.Entity<PortfolioPosition>(entity =>
+            {
+                entity.HasKey(pp => pp.Id);
+                entity.Property(pp => pp.StockSymbol).IsRequired().HasMaxLength(20);
+                entity.Property(pp => pp.AverageEntryPrice).HasPrecision(18, 4);
+
+                entity.HasOne(pp => pp.Portfolio)
+                    .WithMany(p => p.Positions)
+                    .HasForeignKey(pp => pp.PortfolioId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(pp => new { pp.PortfolioId, pp.StockSymbol }).IsUnique();
+            });
+
+            // Configure PortfolioTransaction
+            modelBuilder.Entity<PortfolioTransaction>(entity =>
+            {
+                entity.HasKey(pt => pt.Id);
+                entity.Property(pt => pt.StockSymbol).IsRequired().HasMaxLength(20);
+                entity.Property(pt => pt.Price).HasPrecision(18, 4);
+
+                entity.HasOne(pt => pt.Portfolio)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(pt => pt.PortfolioId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }

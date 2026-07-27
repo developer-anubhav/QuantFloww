@@ -60,7 +60,7 @@ export const OrderBook: React.FC<OrderBookProps> = ({ price, symbol }) => {
     <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm space-y-4">
       <div>
         <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">L2 Market Depth</h3>
-        <p className="text-xs text-zinc-450 dark:text-zinc-550">
+        <p className="text-xs text-zinc-400 dark:text-zinc-500">
           Simulated order matching depth queues.
         </p>
       </div>

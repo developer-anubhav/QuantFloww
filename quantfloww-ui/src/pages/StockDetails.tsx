@@ -6,7 +6,7 @@ import { useSignalR } from '../hooks/useSignalR';
 import { StockChart } from '../components/StockChart';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
-import { ArrowLeft, Plus, Check, Loader2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Plus, Check, Loader2, AlertCircle, ShoppingBag, DollarSign, Activity } from 'lucide-react';
 import { OrderBook } from '../components/OrderBook';
 import { MarginCalculator } from '../components/MarginCalculator';
 
@@ -56,7 +56,13 @@ export const StockDetails: React.FC = () => {
   const [liveStock, setLiveStock] = useState<StockDetailsData | null>(null);
   const [showWatchlistModal, setShowWatchlistModal] = useState(false);
   const [watchlistSuccessMessage, setWatchlistSuccessMessage] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'chart' | 'orderbook' | 'events' | 'margin'>('chart');
+  const [activeTab, setActiveTab] = useState<'chart' | 'orderbook' | 'events' | 'margin' | 'trade'>('chart');
+
+  // Trade form states
+  const [tradeType, setTradeType] = useState<'BUY' | 'SELL'>('BUY');
+  const [tradeQuantity, setTradeQuantity] = useState<number>(10);
+  const [tradeErrorMsg, setTradeErrorMsg] = useState('');
+  const [tradeSuccessMsg, setTradeSuccessMsg] = useState('');
 
   // Fetch static stock profile
   const { data: profile, isLoading: isProfileLoading, error: profileError } = useQuery<StockDetailsData>({
@@ -111,6 +117,37 @@ export const StockDetails: React.FC = () => {
     },
     onError: (err: any) => {
       alert(err.response?.data?.message || 'Failed to add item to watchlist.');
+    }
+  });
+
+  // Fetch user portfolio for balance and holdings verification
+  const { data: portfolio } = useQuery<any>({
+    queryKey: ['portfolio'],
+    queryFn: async () => {
+      const response = await api.get('/portfolio');
+      return response.data;
+    },
+    enabled: isAuthenticated,
+  });
+
+  const tradeMutation = useMutation({
+    mutationFn: async (vars: { symbol: string; type: 'BUY' | 'SELL'; quantity: number }) => {
+      const response = await api.post('/portfolio/trade', {
+        stockSymbol: vars.symbol,
+        type: vars.type,
+        quantity: vars.quantity
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portfolio'] });
+      setTradeSuccessMsg(`Successfully executed order!`);
+      setTradeErrorMsg('');
+      setTimeout(() => setTradeSuccessMsg(''), 4000);
+    },
+    onError: (err: any) => {
+      setTradeErrorMsg(err.response?.data?.message ?? 'Trade execution failed.');
+      setTradeSuccessMsg('');
     }
   });
 
@@ -239,7 +276,8 @@ export const StockDetails: React.FC = () => {
             { id: 'chart', label: 'Interactive Chart' },
             { id: 'orderbook', label: 'Order Book (L2)' },
             { id: 'events', label: 'Corporate Actions' },
-            { id: 'margin', label: 'Leverage Calculator' }
+            { id: 'margin', label: 'Leverage Calculator' },
+            { id: 'trade', label: 'Paper Trading' }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -302,13 +340,13 @@ export const StockDetails: React.FC = () => {
           <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm space-y-5">
             <div>
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">Corporate Events Calendar</h3>
-              <p className="text-xs text-zinc-450 dark:text-zinc-550">
+              <p className="text-xs text-zinc-400 dark:text-zinc-500">
                 Earnings announcements, dividend schedules, and corporate board meetings.
               </p>
             </div>
             {isEventsLoading ? (
-              <div className="py-10 text-center text-zinc-500 dark:text-zinc-550">
-                <Loader2 className="w-6 h-6 animate-spin text-blue-550 mx-auto" />
+              <div className="py-10 text-center text-zinc-500 dark:text-zinc-400">
+                <Loader2 className="w-6 h-6 animate-spin text-blue-500 mx-auto" />
                 <p className="text-xs mt-1">Loading corporate calendar...</p>
               </div>
             ) : (
@@ -326,7 +364,7 @@ export const StockDetails: React.FC = () => {
                         {new Date(event.date).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                       </span>
                       <h4 className="text-sm font-extrabold text-zinc-950 dark:text-zinc-50 mt-1.5">{event.title}</h4>
-                      <p className="text-xs text-zinc-550 dark:text-zinc-450 mt-1 max-w-xl leading-relaxed">{event.description}</p>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-xl leading-relaxed">{event.description}</p>
                     </div>
                   </div>
                 ))}
@@ -340,6 +378,172 @@ export const StockDetails: React.FC = () => {
 
         {activeTab === 'margin' && (
           <MarginCalculator currentPrice={liveStock.price} />
+        )}
+
+        {activeTab === 'trade' && (
+          <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm">
+            <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-1.5 pb-4 border-b border-zinc-100 dark:border-zinc-800/80 mb-4">
+              <ShoppingBag className="w-4 h-4 text-blue-500" />
+              Paper Trade Execution: {liveStock.symbol}
+            </h3>
+
+            {!isAuthenticated ? (
+              <div className="p-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                Please log in to your account to execute paper trades.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Holdings & Balance Summary */}
+                <div className="space-y-4">
+                  <div className="bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-150 dark:border-zinc-850 rounded-xl p-4 space-y-3">
+                    <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Account Summary</h4>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-zinc-400">Available Cash:</span>
+                      <span className="font-mono font-bold text-zinc-950 dark:text-zinc-50">
+                        ₹{(portfolio?.balance ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                  </div>
+
+                  {(() => {
+                    const position = portfolio?.positions?.find(
+                      (p: any) => p.stockSymbol.toUpperCase() === symbol?.toUpperCase()
+                    );
+
+                    if (!position) {
+                      return (
+                        <div className="bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-150 dark:border-zinc-850 rounded-xl p-4 text-center text-xs text-zinc-400 dark:text-zinc-500">
+                          You do not currently own any shares of {symbol?.toUpperCase()}.
+                        </div>
+                      );
+                    }
+
+                    const currentVal = position.quantity * liveStock.price;
+                    const costBasis = position.quantity * position.averageEntryPrice;
+                    const pnl = currentVal - costBasis;
+                    const pnlPercent = costBasis > 0 ? (pnl / costBasis) * 100 : 0;
+
+                    return (
+                      <div className="bg-zinc-50 dark:bg-zinc-900/30 border border-zinc-150 dark:border-zinc-850 rounded-xl p-4 space-y-3">
+                        <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Your Position</h4>
+                        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                          <div>
+                            <span className="text-zinc-400 block text-[10px] uppercase">Shares Owned</span>
+                            <span className="font-bold text-zinc-900 dark:text-zinc-100 text-sm">{position.quantity}</span>
+                          </div>
+                          <div>
+                            <span className="text-zinc-400 block text-[10px] uppercase">Average Cost</span>
+                            <span className="font-bold text-zinc-900 dark:text-zinc-100 text-sm">₹{position.averageEntryPrice.toFixed(2)}</span>
+                          </div>
+                          <div className="mt-1">
+                            <span className="text-zinc-400 block text-[10px] uppercase">Current Value</span>
+                            <span className="font-bold text-zinc-900 dark:text-zinc-100 text-sm">₹{currentVal.toFixed(2)}</span>
+                          </div>
+                          <div className="mt-1">
+                            <span className="text-zinc-400 block text-[10px] uppercase">Unrealized P&L</span>
+                            <span className={`font-bold text-sm ${pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                              ₹{pnl.toFixed(2)} ({pnl >= 0 ? '+' : ''}{pnlPercent.toFixed(2)}%)
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Trade Form */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (tradeQuantity <= 0) {
+                      setTradeErrorMsg('Quantity must be positive.');
+                      return;
+                    }
+                    tradeMutation.mutate({
+                      symbol: symbol!,
+                      type: tradeType,
+                      quantity: tradeQuantity
+                    });
+                  }}
+                  className="space-y-4"
+                >
+                  <div className="grid grid-cols-2 p-1 bg-zinc-105 dark:bg-zinc-950 rounded-lg">
+                    <button
+                      type="button"
+                      onClick={() => setTradeType('BUY')}
+                      className={`py-1.5 text-xs font-black rounded-md cursor-pointer transition-all ${tradeType === 'BUY' ? 'bg-emerald-500 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-250'}`}
+                    >
+                      BUY
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTradeType('SELL')}
+                      className={`py-1.5 text-xs font-black rounded-md cursor-pointer transition-all ${tradeType === 'SELL' ? 'bg-rose-500 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-250'}`}
+                    >
+                      SELL
+                    </button>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block mb-1.5">Shares Quantity</label>
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={tradeQuantity}
+                      onChange={(e) => setTradeQuantity(parseInt(e.target.value) || 0)}
+                      className="w-full px-3 py-2 bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono font-bold"
+                    />
+                  </div>
+
+                  <div className="bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-800/40 rounded-lg p-3 space-y-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">Execution Market Price</span>
+                      <span className="font-mono font-bold text-zinc-950 dark:text-zinc-50">₹{liveStock.price.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between border-t border-zinc-100 dark:border-zinc-800/40 pt-2">
+                      <span className="text-zinc-400">{tradeType === 'BUY' ? 'Estimated Cost' : 'Estimated Proceeds'}</span>
+                      <span className="font-mono font-black text-zinc-950 dark:text-zinc-50 text-sm">
+                        ₹{(liveStock.price * tradeQuantity).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                  </div>
+
+                  {tradeErrorMsg && (
+                    <div className="text-xs text-rose-500 bg-rose-500/10 p-2.5 rounded border border-rose-500/25">
+                      {tradeErrorMsg}
+                    </div>
+                  )}
+                  {tradeSuccessMsg && (
+                    <div className="text-xs text-emerald-500 bg-emerald-500/10 p-2.5 rounded border border-emerald-500/25">
+                      {tradeSuccessMsg}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={tradeMutation.isPending}
+                    className={`w-full py-2 rounded-lg text-xs font-black text-white transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      tradeMutation.isPending ? 'bg-zinc-600' :
+                      tradeType === 'BUY' ? 'bg-emerald-500 hover:bg-emerald-600' :
+                      'bg-rose-500 hover:bg-rose-600'
+                    }`}
+                  >
+                    {tradeMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Executing Trade...
+                      </>
+                    ) : (
+                      <>
+                        Execute {tradeType} Order
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
         )}
       </div>
 

@@ -42,6 +42,7 @@ namespace QuantFloww.Infrastructure
             services.AddScoped<IStockRepository, StockRepository>();
             services.AddScoped<IWatchlistRepository, WatchlistRepository>();
             services.AddScoped<IYahooFinanceService, YahooFinanceService>();
+            services.AddScoped<IPortfolioRepository, PortfolioRepository>();
 
             // Caching & JWT Utilities
             services.AddMemoryCache();
