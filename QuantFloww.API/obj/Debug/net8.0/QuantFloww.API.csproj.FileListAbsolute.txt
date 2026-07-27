@@ -159,3 +159,4 @@ C:\Code\QuantFloww\QuantFloww.API\obj\Debug\net8.0\refint\QuantFloww.API.dll
 C:\Code\QuantFloww\QuantFloww.API\obj\Debug\net8.0\QuantFloww.API.pdb
 C:\Code\QuantFloww\QuantFloww.API\obj\Debug\net8.0\QuantFloww.API.genruntimeconfig.cache
 C:\Code\QuantFloww\QuantFloww.API\obj\Debug\net8.0\ref\QuantFloww.API.dll
+C:\Code\QuantFloww\QuantFloww.API\obj\Debug\net8.0\QuantFloww.API.sourcelink.json

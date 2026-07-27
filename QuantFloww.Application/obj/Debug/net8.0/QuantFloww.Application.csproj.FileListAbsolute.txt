@@ -13,3 +13,4 @@ C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFloww.Applicatio
 C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\refint\QuantFloww.Application.dll
 C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFloww.Application.pdb
 C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\ref\QuantFloww.Application.dll
+C:\Code\QuantFloww\QuantFloww.Application\obj\Debug\net8.0\QuantFloww.Application.sourcelink.json

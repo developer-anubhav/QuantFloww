@@ -52,6 +52,14 @@ namespace QuantFloww.Infrastructure.Persistence.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<StockEvent>> GetEventsAsync(string symbol)
+        {
+            return await _dbContext.StockEvents
+                .Where(e => e.StockSymbol == symbol)
+                .OrderBy(e => e.Date)
+                .ToListAsync();
+        }
+
         public async Task AddAsync(Stock stock)
         {
             await _dbContext.Stocks.AddAsync(stock);

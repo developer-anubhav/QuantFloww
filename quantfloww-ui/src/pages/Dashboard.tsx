@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useSignalR } from '../hooks/useSignalR';
 import { Search, TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
+import { SectorHeatmap } from '../components/SectorHeatmap';
+import { BlockDealsList, type BlockDeal } from '../components/BlockDealsList';
 
 interface StockData {
   symbol: string;
@@ -29,6 +31,7 @@ export const Dashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [liveStocks, setLiveStocks] = useState<StockData[]>([]);
   const [lastUpdatedTick, setLastUpdatedTick] = useState<Record<string, { price: number; dir: 'up' | 'down' | null }>>({});
+  const [blockDeals, setBlockDeals] = useState<BlockDeal[]>([]);
 
   // Fetch initial stocks data
   const { data: initialStocks, isLoading, isError } = useQuery<StockData[]>({
@@ -90,7 +93,11 @@ export const Dashboard: React.FC = () => {
     });
   };
 
-  const isConnected = useSignalR(handlePriceUpdate);
+  const handleBlockDeal = (deal: BlockDeal) => {
+    setBlockDeals((prev) => [deal, ...prev].slice(0, 30));
+  };
+
+  const isConnected = useSignalR(handlePriceUpdate, handleBlockDeal);
 
   // Compute mock Indices based on the average prices of live stocks (makes them respond dynamically!)
   const indices = useMemo(() => {
@@ -234,6 +241,9 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Sector Heatmap */}
+      <SectorHeatmap stocks={liveStocks} />
+
       {/* Main Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
@@ -352,6 +362,9 @@ export const Dashboard: React.FC = () => {
               ))}
             </div>
           </div>
+
+          {/* Whale Watch Live Block Deals */}
+          <BlockDealsList deals={blockDeals} />
         </div>
 
       </div>

@@ -123,8 +123,40 @@ namespace QuantFloww.Infrastructure.Persistence
                 }
             }
 
+            var events = new List<StockEvent>();
+            foreach (var stock in stocks)
+            {
+                events.Add(new StockEvent
+                {
+                    StockSymbol = stock.Symbol,
+                    Date = DateTime.UtcNow.AddDays(-15),
+                    Title = "Q4 Financial Results",
+                    Description = $"{stock.Name} announced its Q4 audited financial results showing an increase in net margin.",
+                    Type = StockEventType.Earnings
+                });
+
+                events.Add(new StockEvent
+                {
+                    StockSymbol = stock.Symbol,
+                    Date = DateTime.UtcNow.AddDays(5),
+                    Title = "Annual General Meeting (AGM)",
+                    Description = $"The board of directors of {stock.Name} will hold its annual general meeting to discuss future strategy.",
+                    Type = StockEventType.BoardMeeting
+                });
+
+                events.Add(new StockEvent
+                {
+                    StockSymbol = stock.Symbol,
+                    Date = DateTime.UtcNow.AddDays(18),
+                    Title = "Interim Dividend Distribution",
+                    Description = $"{stock.Name} announced an interim dividend of ₹{(stock.Price * 0.012m):F2} per equity share.",
+                    Type = StockEventType.Dividend
+                });
+            }
+
             await context.Stocks.AddRangeAsync(stocks);
             await context.StockPriceHistories.AddRangeAsync(histories);
+            await context.StockEvents.AddRangeAsync(events);
             await context.SaveChangesAsync();
         }
 

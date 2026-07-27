@@ -10,6 +10,7 @@ namespace QuantFloww.Application.Persistence
         Task<IEnumerable<Stock>> SearchAsync(string query);
         Task<IEnumerable<Stock>> GetAllAsync();
         Task<IEnumerable<StockPriceHistory>> GetPriceHistoryAsync(string symbol, int days);
+        Task<IEnumerable<StockEvent>> GetEventsAsync(string symbol);
         Task AddAsync(Stock stock);
         Task AddRangeAsync(IEnumerable<Stock> stocks);
         Task AddPriceHistoryRangeAsync(IEnumerable<StockPriceHistory> history);

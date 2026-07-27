@@ -1,14 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import * as signalR from '@microsoft/signalr';
 
-export const useSignalR = (onPriceUpdate: (data: any) => void) => {
+export const useSignalR = (
+  onPriceUpdate: (data: any) => void,
+  onBlockDeal?: (data: any) => void
+) => {
   const [isConnected, setIsConnected] = useState(false);
-  const callbackRef = useRef(onPriceUpdate);
+  const priceCallbackRef = useRef(onPriceUpdate);
+  const blockCallbackRef = useRef(onBlockDeal);
 
-  // Keep the callback reference up to date without triggering reconnection
+  // Keep references up to date without triggering reconnection
   useEffect(() => {
-    callbackRef.current = onPriceUpdate;
+    priceCallbackRef.current = onPriceUpdate;
   }, [onPriceUpdate]);
+
+  useEffect(() => {
+    blockCallbackRef.current = onBlockDeal;
+  }, [onBlockDeal]);
 
   useEffect(() => {
     const token = localStorage.getItem('token') || '';
@@ -22,8 +30,14 @@ export const useSignalR = (onPriceUpdate: (data: any) => void) => {
       .build();
 
     connection.on('ReceivePriceUpdate', (data) => {
-      if (callbackRef.current) {
-        callbackRef.current(data);
+      if (priceCallbackRef.current) {
+        priceCallbackRef.current(data);
+      }
+    });
+
+    connection.on('ReceiveBlockDeal', (data) => {
+      if (blockCallbackRef.current) {
+        blockCallbackRef.current(data);
       }
     });
 
@@ -41,7 +55,7 @@ export const useSignalR = (onPriceUpdate: (data: any) => void) => {
         .then(() => console.log('SignalR Live feed disconnected.'))
         .catch(err => console.error('Error disconnecting SignalR: ', err));
     };
-  }, []); // Empty dependency array ensures connection is established only once on mount
+  }, []);
 
   return isConnected;
 };

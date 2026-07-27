@@ -16,6 +16,7 @@ namespace QuantFloww.Infrastructure.Persistence
         public DbSet<StockPriceHistory> StockPriceHistories => Set<StockPriceHistory>();
         public DbSet<Watchlist> Watchlists => Set<Watchlist>();
         public DbSet<WatchlistItem> WatchlistItems => Set<WatchlistItem>();
+        public DbSet<StockEvent> StockEvents => Set<StockEvent>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -79,6 +80,20 @@ namespace QuantFloww.Infrastructure.Persistence
 
                 // Add unique constraint for (WatchlistId, StockSymbol) to prevent duplicates
                 entity.HasIndex(wi => new { wi.WatchlistId, wi.StockSymbol }).IsUnique();
+            });
+
+            // Configure StockEvent
+            modelBuilder.Entity<StockEvent>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Description).HasMaxLength(500);
+                entity.Property(e => e.StockSymbol).IsRequired().HasMaxLength(20);
+
+                entity.HasOne(e => e.Stock)
+                    .WithMany(s => s.Events)
+                    .HasForeignKey(e => e.StockSymbol)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

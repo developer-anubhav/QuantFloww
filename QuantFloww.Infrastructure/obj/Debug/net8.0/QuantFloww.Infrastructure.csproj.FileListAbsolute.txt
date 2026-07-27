@@ -17,3 +17,4 @@ C:\Code\QuantFloww\QuantFloww.Infrastructure\obj\Debug\net8.0\refint\QuantFloww.
 C:\Code\QuantFloww\QuantFloww.Infrastructure\obj\Debug\net8.0\QuantFloww.Infrastructure.pdb
 C:\Code\QuantFloww\QuantFloww.Infrastructure\obj\Debug\net8.0\QuantFloww.Infrastructure.genruntimeconfig.cache
 C:\Code\QuantFloww\QuantFloww.Infrastructure\obj\Debug\net8.0\ref\QuantFloww.Infrastructure.dll
+C:\Code\QuantFloww\QuantFloww.Infrastructure\obj\Debug\net8.0\QuantFloww.Infrastructure.sourcelink.json

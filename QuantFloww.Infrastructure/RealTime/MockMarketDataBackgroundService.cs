@@ -118,6 +118,37 @@ namespace QuantFloww.Infrastructure.RealTime
                     await _hubContext.Clients.Group(stock.Symbol).SendAsync("ReceiveTickerUpdate", updatePayload, cancellationToken: stoppingToken);
                 }
 
+                // Simulate block deals: ~10% chance per tick (~20 seconds average)
+                if (_random.NextDouble() < 0.10 && _cachedStocks.Any())
+                {
+                    var stock = _cachedStocks[_random.Next(_cachedStocks.Count)];
+                    var quantity = _random.Next(20, 150) * 1000;
+                    var tradeValue = stock.Price * quantity;
+                    var buyers = new[] { "LIC of India", "HDFC Mutual Fund", "SBI Mutual Fund", "Morgan Stanley", "Societe Generale", "ICICI Prudential" };
+                    var sellers = new[] { "Promoter Group", "FII Sector Fund", "Vanguard Group", "Norway Government Pension Fund", "BlackRock ETF" };
+
+                    var buyer = buyers[_random.Next(buyers.Length)];
+                    var seller = sellers[_random.Next(sellers.Length)];
+                    while (seller == buyer)
+                    {
+                        seller = sellers[_random.Next(sellers.Length)];
+                    }
+
+                    var blockDealPayload = new
+                    {
+                        Id = Guid.NewGuid(),
+                        Symbol = stock.Symbol,
+                        Price = Math.Round(stock.Price, 2),
+                        Quantity = quantity,
+                        ValueCr = Math.Round(tradeValue / 10000000.0m, 2), // in Indian Crores
+                        Buyer = buyer,
+                        Seller = seller,
+                        Time = DateTime.UtcNow
+                    };
+
+                    await _hubContext.Clients.All.SendAsync("ReceiveBlockDeal", blockDealPayload, cancellationToken: stoppingToken);
+                }
+
                 dbUpdateCounter++;
 
                 // Every 15 ticks (~30 seconds), batch update database state

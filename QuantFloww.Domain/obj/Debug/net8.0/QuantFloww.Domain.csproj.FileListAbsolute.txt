@@ -9,3 +9,4 @@ C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\QuantFloww.Domain.dll
 C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\refint\QuantFloww.Domain.dll
 C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\QuantFloww.Domain.pdb
 C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\ref\QuantFloww.Domain.dll
+C:\Code\QuantFloww\QuantFloww.Domain\obj\Debug\net8.0\QuantFloww.Domain.sourcelink.json

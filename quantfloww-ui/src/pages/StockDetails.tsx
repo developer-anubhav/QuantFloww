@@ -7,6 +7,8 @@ import { StockChart } from '../components/StockChart';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { ArrowLeft, Plus, Check, Loader2, AlertCircle } from 'lucide-react';
+import { OrderBook } from '../components/OrderBook';
+import { MarginCalculator } from '../components/MarginCalculator';
 
 interface StockDetailsData {
   symbol: string;
@@ -54,6 +56,7 @@ export const StockDetails: React.FC = () => {
   const [liveStock, setLiveStock] = useState<StockDetailsData | null>(null);
   const [showWatchlistModal, setShowWatchlistModal] = useState(false);
   const [watchlistSuccessMessage, setWatchlistSuccessMessage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'chart' | 'orderbook' | 'events' | 'margin'>('chart');
 
   // Fetch static stock profile
   const { data: profile, isLoading: isProfileLoading, error: profileError } = useQuery<StockDetailsData>({
@@ -70,6 +73,16 @@ export const StockDetails: React.FC = () => {
     queryKey: ['stockHistory', symbol, timeframe],
     queryFn: async () => {
       const response = await api.get(`/stocks/${symbol}/history?days=${timeframe}`);
+      return response.data;
+    },
+    enabled: !!symbol,
+  });
+
+  // Fetch corporate events calendar
+  const { data: events = [], isLoading: isEventsLoading } = useQuery<any[]>({
+    queryKey: ['stockEvents', symbol],
+    queryFn: async () => {
+      const response = await api.get(`/stocks/${symbol}/events`);
       return response.data;
     },
     enabled: !!symbol,
@@ -219,41 +232,114 @@ export const StockDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* Chart Canvas */}
+      {/* Tabs and Tab Content */}
       <div className="space-y-4">
-        {/* Timeframe selector */}
-        <div className="flex justify-between items-center bg-zinc-50 dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 p-2 rounded-xl">
-          <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 pl-2">Timeframe</span>
-          <div className="flex bg-zinc-100 dark:bg-[#18181b] p-0.5 rounded-lg">
-            {[
-              { label: '1W', days: 7 },
-              { label: '1M', days: 30 },
-              { label: '3M', days: 90 },
-              { label: '1Y', days: 365 }
-            ].map((tf) => (
-              <button
-                key={tf.label}
-                onClick={() => setTimeframe(tf.days)}
-                className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
-                  timeframe === tf.days
-                    ? 'bg-white dark:bg-zinc-800 text-blue-500 shadow-sm'
-                    : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
-                }`}
-              >
-                {tf.label}
-              </button>
-            ))}
-          </div>
+        <div className="flex border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#0c0c0f] rounded-xl p-1">
+          {[
+            { id: 'chart', label: 'Interactive Chart' },
+            { id: 'orderbook', label: 'Order Book (L2)' },
+            { id: 'events', label: 'Corporate Actions' },
+            { id: 'margin', label: 'Leverage Calculator' }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex-1 text-center py-2.5 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer ${
+                activeTab === tab.id
+                  ? 'bg-white dark:bg-zinc-800 text-blue-500 shadow-sm border border-zinc-150 dark:border-zinc-850'
+                  : 'text-zinc-500 hover:text-zinc-755 dark:hover:text-zinc-300'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* TradingView Chart Wrapper */}
-        {isHistoryLoading ? (
-          <div className="h-[400px] flex items-center justify-center bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-500 mr-2" />
-            <span className="text-zinc-500 text-sm">Loading historical data...</span>
+        {activeTab === 'chart' && (
+          <div className="space-y-4">
+            {/* Timeframe selector */}
+            <div className="flex justify-between items-center bg-zinc-50 dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 p-2 rounded-xl">
+              <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 pl-2">Timeframe</span>
+              <div className="flex bg-zinc-100 dark:bg-[#18181b] p-0.5 rounded-lg">
+                {[
+                  { label: '1W', days: 7 },
+                  { label: '1M', days: 30 },
+                  { label: '3M', days: 90 },
+                  { label: '1Y', days: 365 }
+                ].map((tf) => (
+                  <button
+                    key={tf.label}
+                    onClick={() => setTimeframe(tf.days)}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+                      timeframe === tf.days
+                        ? 'bg-white dark:bg-zinc-800 text-blue-500 shadow-sm'
+                        : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+                    }`}
+                  >
+                    {tf.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* TradingView Chart Wrapper */}
+            {isHistoryLoading ? (
+              <div className="h-[400px] flex items-center justify-center bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-500 mr-2" />
+                <span className="text-zinc-500 text-sm">Loading historical data...</span>
+              </div>
+            ) : (
+              <StockChart data={history} symbol={liveStock.symbol} theme={darkMode ? 'dark' : 'light'} />
+            )}
           </div>
-        ) : (
-          <StockChart data={history} symbol={liveStock.symbol} theme={darkMode ? 'dark' : 'light'} />
+        )}
+
+        {activeTab === 'orderbook' && (
+          <OrderBook price={liveStock.price} symbol={liveStock.symbol} />
+        )}
+
+        {activeTab === 'events' && (
+          <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm space-y-5">
+            <div>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">Corporate Events Calendar</h3>
+              <p className="text-xs text-zinc-450 dark:text-zinc-550">
+                Earnings announcements, dividend schedules, and corporate board meetings.
+              </p>
+            </div>
+            {isEventsLoading ? (
+              <div className="py-10 text-center text-zinc-500 dark:text-zinc-550">
+                <Loader2 className="w-6 h-6 animate-spin text-blue-550 mx-auto" />
+                <p className="text-xs mt-1">Loading corporate calendar...</p>
+              </div>
+            ) : (
+              <div className="relative border-l-2 border-zinc-200 dark:border-zinc-800 ml-3.5 pl-6 space-y-6">
+                {events.map((event) => (
+                  <div key={event.id} className="relative">
+                    <span className="absolute -left-[30px] top-1 w-4 h-4 rounded-full border-2 border-blue-500 bg-white dark:bg-[#0c0c0f] flex items-center justify-center text-[10px] text-blue-500 font-bold">
+                      •
+                    </span>
+                    <div>
+                      <span className="text-[9px] font-bold font-mono uppercase bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-full">
+                        {event.type}
+                      </span>
+                      <span className="text-[10px] text-zinc-400 font-mono ml-2">
+                        {new Date(event.date).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                      </span>
+                      <h4 className="text-sm font-extrabold text-zinc-950 dark:text-zinc-50 mt-1.5">{event.title}</h4>
+                      <p className="text-xs text-zinc-550 dark:text-zinc-450 mt-1 max-w-xl leading-relaxed">{event.description}</p>
+                    </div>
+                  </div>
+                ))}
+                {events.length === 0 && (
+                  <p className="text-xs text-zinc-500 dark:text-zinc-500 pl-2">No corporate actions on schedule.</p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'margin' && (
+          <MarginCalculator currentPrice={liveStock.price} />
         )}
       </div>
 

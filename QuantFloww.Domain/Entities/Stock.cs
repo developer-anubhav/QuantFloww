@@ -23,5 +23,6 @@ namespace QuantFloww.Domain.Entities
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         public virtual ICollection<StockPriceHistory> PriceHistory { get; set; } = new List<StockPriceHistory>();
+        public virtual ICollection<StockEvent> Events { get; set; } = new List<StockEvent>();
     }
 }

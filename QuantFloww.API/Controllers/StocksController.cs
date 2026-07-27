@@ -82,6 +82,23 @@ namespace QuantFloww.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{symbol}/events")]
+        public async Task<ActionResult<IEnumerable<dynamic>>> GetEvents(string symbol)
+        {
+            var events = await _stockRepository.GetEventsAsync(symbol.ToUpper());
+            var response = events.Select(e => new
+            {
+                Id = e.Id,
+                StockSymbol = e.StockSymbol,
+                Date = e.Date.ToString("yyyy-MM-dd"),
+                Title = e.Title,
+                Description = e.Description,
+                Type = e.Type.ToString()
+            }).ToList();
+
+            return Ok(response);
+        }
+
         private async Task<StockResponse> MapToStockResponse(Stock stock)
         {
             // Check cache for simulated live price updates
