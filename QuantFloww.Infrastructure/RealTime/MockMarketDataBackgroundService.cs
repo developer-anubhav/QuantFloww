@@ -22,6 +22,17 @@ namespace QuantFloww.Infrastructure.RealTime
         private List<Stock> _cachedStocks = new();
         private readonly Random _random = new();
 
+        private static readonly List<Stock> _newStocksToRegister = new();
+        private static readonly object _lock = new();
+
+        public static void RegisterNewStock(Stock stock)
+        {
+            lock (_lock)
+            {
+                _newStocksToRegister.Add(stock);
+            }
+        }
+
         public MockMarketDataBackgroundService(
             IServiceScopeFactory scopeFactory,
             IHubContext<MarketDataHub> hubContext,
@@ -60,6 +71,22 @@ namespace QuantFloww.Infrastructure.RealTime
 
             while (!stoppingToken.IsCancellationRequested)
             {
+                // Register dynamically added stocks from search
+                lock (_lock)
+                {
+                    if (_newStocksToRegister.Any())
+                    {
+                        foreach (var newStock in _newStocksToRegister)
+                        {
+                            if (!_cachedStocks.Any(s => s.Symbol == newStock.Symbol))
+                            {
+                                _cachedStocks.Add(newStock);
+                            }
+                        }
+                        _newStocksToRegister.Clear();
+                    }
+                }
+
                 if (!_cachedStocks.Any())
                 {
                     // Reload if empty

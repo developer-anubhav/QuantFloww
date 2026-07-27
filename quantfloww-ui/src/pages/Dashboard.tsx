@@ -32,6 +32,9 @@ export const Dashboard: React.FC = () => {
   const [liveStocks, setLiveStocks] = useState<StockData[]>([]);
   const [lastUpdatedTick, setLastUpdatedTick] = useState<Record<string, { price: number; dir: 'up' | 'down' | null }>>({});
   const [blockDeals, setBlockDeals] = useState<BlockDeal[]>([]);
+  const [searchResults, setSearchResults] = useState<StockData[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // Fetch initial stocks data
   const { data: initialStocks, isLoading, isError } = useQuery<StockData[]>({
@@ -48,6 +51,39 @@ export const Dashboard: React.FC = () => {
       setLiveStocks(initialStocks);
     }
   }, [initialStocks]);
+
+  // Debounced Global Search trigger
+  useEffect(() => {
+    if (searchQuery.trim().length < 2) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    const delayDebounce = setTimeout(async () => {
+      setIsSearching(true);
+      setShowDropdown(true);
+      try {
+        const response = await api.get(`/stocks/search?query=${encodeURIComponent(searchQuery)}`);
+        setSearchResults(response.data);
+      } catch (err) {
+        console.error('Error fetching search results:', err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery]);
+
+  // Click outside to close suggestion dropdown
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowDropdown(false);
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   // Hook into real-time price updates via SignalR
   const handlePriceUpdate = (update: any) => {
@@ -184,15 +220,58 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Search Box */}
-        <div className="relative w-full md:w-80">
+        <div className="relative w-full md:w-80" onClick={(e) => e.stopPropagation()}>
           <Search className="absolute left-3 top-3 w-4 h-4 text-zinc-400" />
           <input
             type="text"
-            placeholder="Search symbol or company..."
+            placeholder="Search NSE/BSE stocks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => { if (searchResults.length > 0) setShowDropdown(true); }}
             className="w-full pl-10 pr-4 py-2 bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-zinc-950 dark:text-zinc-50 placeholder-zinc-400 dark:placeholder-zinc-600 transition-all"
           />
+          {isSearching && (
+            <Loader2 className="absolute right-3 top-3 w-4 h-4 animate-spin text-blue-500" />
+          )}
+
+          {/* Floating Global Search Results Dropdown */}
+          {showDropdown && (searchResults.length > 0 || isSearching) && (
+            <div className="absolute left-0 right-0 mt-2 bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl z-50 max-h-85 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-800/80 animate-fade-in select-none">
+              {isSearching ? (
+                <div className="p-4 text-center text-xs text-zinc-405 dark:text-zinc-500">
+                  Searching NSE/BSE exchanges...
+                </div>
+              ) : (
+                searchResults.map((stock) => (
+                  <button
+                    key={stock.symbol}
+                    onClick={() => {
+                      setShowDropdown(false);
+                      setSearchQuery('');
+                      navigate(`/stocks/${stock.symbol}`);
+                    }}
+                    className="w-full px-4 py-3 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/40 cursor-pointer flex items-center justify-between transition-colors"
+                  >
+                    <div>
+                      <span className="font-extrabold text-xs font-mono text-zinc-950 dark:text-zinc-50">{stock.symbol}</span>
+                      <span className="text-[10px] text-zinc-400 dark:text-zinc-500 ml-2 uppercase font-semibold">
+                        {stock.exchange}
+                      </span>
+                      <p className="text-[10.5px] text-zinc-500 dark:text-zinc-400 truncate max-w-[180px]">{stock.name}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-mono text-xs font-bold text-zinc-950 dark:text-zinc-100">
+                        ₹{stock.price.toFixed(2)}
+                      </span>
+                      <p className={`text-[10px] font-mono font-bold ${stock.changePercent >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                      </p>
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
+          )}
         </div>
       </div>
 

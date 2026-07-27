@@ -40,6 +40,11 @@ namespace QuantFloww.Infrastructure.Persistence.Repositories
             await _dbContext.Watchlists.AddAsync(watchlist);
         }
 
+        public async Task AddItemAsync(WatchlistItem item)
+        {
+            await _dbContext.WatchlistItems.AddAsync(item);
+        }
+
         public async Task UpdateAsync(Watchlist watchlist)
         {
             _dbContext.Watchlists.Update(watchlist);

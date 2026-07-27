@@ -10,6 +10,7 @@ using QuantFloww.Infrastructure.Persistence;
 using QuantFloww.Infrastructure.Persistence.Repositories;
 using QuantFloww.Infrastructure.RealTime;
 using QuantFloww.Infrastructure.Security;
+using QuantFloww.Infrastructure.Services;
 
 namespace QuantFloww.Infrastructure
 {
@@ -40,6 +41,7 @@ namespace QuantFloww.Infrastructure
             // Repositories
             services.AddScoped<IStockRepository, StockRepository>();
             services.AddScoped<IWatchlistRepository, WatchlistRepository>();
+            services.AddScoped<IYahooFinanceService, YahooFinanceService>();
 
             // Caching & JWT Utilities
             services.AddMemoryCache();

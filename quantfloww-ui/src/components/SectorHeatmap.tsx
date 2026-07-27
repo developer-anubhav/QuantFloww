@@ -40,11 +40,11 @@ export const SectorHeatmap: React.FC<SectorHeatmapProps> = ({ stocks }) => {
   }, [stocks]);
 
   const getColorClass = (change: number) => {
-    if (change <= -3) return 'bg-rose-950/80 border-rose-700/80 text-rose-100 hover:bg-rose-900/90';
-    if (change < 0) return 'bg-rose-950/40 border-rose-900/40 text-rose-200 hover:bg-rose-900/60';
-    if (change === 0) return 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:bg-zinc-800';
-    if (change < 3) return 'bg-emerald-950/40 border-emerald-900/40 text-emerald-200 hover:bg-emerald-900/60';
-    return 'bg-emerald-950/80 border-emerald-700/80 text-emerald-100 hover:bg-emerald-900/90';
+    if (change <= -3) return 'bg-rose-950 border-rose-800 text-white hover:bg-rose-900/90';
+    if (change < 0) return 'bg-rose-900 border-rose-800/80 text-rose-100 hover:bg-rose-800/90';
+    if (change === 0) return 'bg-zinc-800 border-zinc-700 text-zinc-200 hover:bg-zinc-700/90';
+    if (change < 3) return 'bg-emerald-900 border-emerald-800/80 text-emerald-100 hover:bg-emerald-800/90';
+    return 'bg-emerald-950 border-emerald-800 text-white hover:bg-emerald-900/90';
   };
 
   return (
@@ -85,16 +85,16 @@ export const SectorHeatmap: React.FC<SectorHeatmapProps> = ({ stocks }) => {
                     className={`${colSpan} p-3 rounded-lg border text-left cursor-pointer flex flex-col justify-between transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-[1px] shadow-sm ${getColorClass(stock.changePercent)}`}
                   >
                     <div className="flex justify-between items-start w-full">
-                      <span className="font-extrabold text-[12px] font-mono tracking-tight">{stock.symbol}</span>
+                      <span className="font-extrabold text-[12px] font-mono tracking-tight text-white">{stock.symbol}</span>
                       <span className={`text-[10px] font-bold ${stock.changePercent >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(1)}%
                       </span>
                     </div>
                     <div className="mt-2.5">
-                      <span className="block text-[11px] font-black font-mono">
+                      <span className="block text-[11px] font-black font-mono text-white">
                         ₹{stock.price.toFixed(2)}
                       </span>
-                      <span className="block text-[8px] text-zinc-400 dark:text-zinc-500 uppercase tracking-wider font-semibold mt-0.5">
+                      <span className="block text-[8px] text-zinc-300 uppercase tracking-wider font-semibold mt-0.5">
                         Cap: {(stock.marketCap / 100000000000).toFixed(1)}B Cr
                       </span>
                     </div>

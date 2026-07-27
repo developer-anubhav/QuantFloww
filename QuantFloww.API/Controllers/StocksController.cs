@@ -8,6 +8,7 @@ using QuantFloww.Application.DTOs;
 using QuantFloww.Application.Persistence;
 using System.Text.Json;
 using QuantFloww.Domain.Entities;
+using QuantFloww.Infrastructure.RealTime;
 
 namespace QuantFloww.API.Controllers
 {
@@ -17,11 +18,13 @@ namespace QuantFloww.API.Controllers
     {
         private readonly IStockRepository _stockRepository;
         private readonly ICacheService _cacheService;
+        private readonly IYahooFinanceService _yahooFinanceService;
 
-        public StocksController(IStockRepository stockRepository, ICacheService cacheService)
+        public StocksController(IStockRepository stockRepository, ICacheService cacheService, IYahooFinanceService yahooFinanceService)
         {
             _stockRepository = stockRepository;
             _cacheService = cacheService;
+            _yahooFinanceService = yahooFinanceService;
         }
 
         [HttpGet]
@@ -54,10 +57,71 @@ namespace QuantFloww.API.Controllers
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<StockResponse>>> Search([FromQuery] string query = "")
         {
-            var stocks = await _stockRepository.SearchAsync(query);
-            var responses = new List<StockResponse>();
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                var allStocks = await _stockRepository.GetAllAsync();
+                var allResponses = new List<StockResponse>();
+                foreach (var stock in allStocks)
+                {
+                    allResponses.Add(await MapToStockResponse(stock));
+                }
+                return Ok(allResponses);
+            }
 
-            foreach (var stock in stocks)
+            // 1. Search locally in our database first
+            var localStocks = await _stockRepository.SearchAsync(query);
+            var resultsMap = localStocks.ToDictionary(s => s.Symbol.ToUpper(), s => s);
+
+            // 2. Search Yahoo Finance Suggestions to discover any new Indian ticker
+            try
+            {
+                var suggestions = await _yahooFinanceService.SearchSuggestionsAsync(query);
+                foreach (var sugg in suggestions)
+                {
+                    string cleanSymbol = sugg.Symbol;
+                    if (sugg.Symbol.Contains("."))
+                    {
+                        cleanSymbol = sugg.Symbol.Split('.')[0];
+                    }
+                    cleanSymbol = cleanSymbol.ToUpper();
+
+                    // If it is already loaded locally, skip
+                    if (resultsMap.ContainsKey(cleanSymbol)) continue;
+
+                    // Check if it already exists in the database but just wasn't in the search results
+                    var existingDbStock = await _stockRepository.GetBySymbolAsync(cleanSymbol);
+                    if (existingDbStock != null)
+                    {
+                        resultsMap[cleanSymbol] = existingDbStock;
+                        continue;
+                    }
+
+                    // Dynamically fetch and seed this new Indian stock!
+                    var fetched = await _yahooFinanceService.FetchStockDataAsync(sugg.Symbol, sugg.Name, sugg.Sector);
+                    if (fetched != null)
+                    {
+                        var (history, stock) = fetched.Value;
+
+                        // Save the stock and its history to the database
+                        await _stockRepository.AddAsync(stock);
+                        await _stockRepository.AddPriceHistoryRangeAsync(history);
+                        await _stockRepository.SaveChangesAsync();
+
+                        // Register with the background simulator so it ticks dynamically in real-time
+                        MockMarketDataBackgroundService.RegisterNewStock(stock);
+
+                        resultsMap[cleanSymbol] = stock;
+                    }
+                }
+            }
+            catch
+            {
+                // Gracefully fallback to whatever we loaded locally
+            }
+
+            // Map and return all results
+            var responses = new List<StockResponse>();
+            foreach (var stock in resultsMap.Values)
             {
                 responses.Add(await MapToStockResponse(stock));
             }

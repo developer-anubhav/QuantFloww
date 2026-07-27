@@ -131,10 +131,11 @@ namespace QuantFloww.API.Controllers
             {
                 WatchlistId = id,
                 StockSymbol = stock.Symbol,
+                Stock = stock,
                 AddedAt = DateTime.UtcNow
             };
 
-            watchlist.Items.Add(item);
+            await _watchlistRepository.AddItemAsync(item);
             await _watchlistRepository.SaveChangesAsync();
 
             // Reload watchlist to get updated list

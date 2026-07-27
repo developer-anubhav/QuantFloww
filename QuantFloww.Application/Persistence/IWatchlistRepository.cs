@@ -10,6 +10,7 @@ namespace QuantFloww.Application.Persistence
         Task<Watchlist?> GetByIdAsync(Guid id);
         Task<IEnumerable<Watchlist>> GetByUserIdAsync(string userId);
         Task AddAsync(Watchlist watchlist);
+        Task AddItemAsync(WatchlistItem item);
         Task UpdateAsync(Watchlist watchlist);
         Task DeleteAsync(Watchlist watchlist);
         Task SaveChangesAsync();
