@@ -166,7 +166,7 @@ namespace QuantFloww.API.Controllers
         private async Task<StockResponse> MapToStockResponse(Stock stock)
         {
             // Check cache for simulated live price updates
-            var cachedUpdate = await _cacheService.GetAsync<dynamic>($"stock:{stock.Symbol}");
+            var cachedUpdate = await _cacheService.GetAsync<StockPriceCachePayload>($"stock:{stock.Symbol}");
 
             decimal price = stock.Price;
             decimal open = stock.Open;
@@ -177,20 +177,12 @@ namespace QuantFloww.API.Controllers
 
             if (cachedUpdate != null)
             {
-                try
-                {
-                    var element = (JsonElement)cachedUpdate;
-                    price = element.GetProperty("price").GetDecimal();
-                    open = element.GetProperty("open").GetDecimal();
-                    high = element.GetProperty("high").GetDecimal();
-                    low = element.GetProperty("low").GetDecimal();
-                    volume = element.GetProperty("volume").GetInt64();
-                    lastUpdated = element.GetProperty("lastUpdated").GetDateTime();
-                }
-                catch
-                {
-                    // Fallback to DB properties if JSON parse fails
-                }
+                price = cachedUpdate.Price;
+                open = cachedUpdate.Open;
+                high = cachedUpdate.High;
+                low = cachedUpdate.Low;
+                volume = cachedUpdate.Volume;
+                lastUpdated = cachedUpdate.LastUpdated;
             }
 
             decimal change = price - stock.PrevClose;

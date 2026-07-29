@@ -177,20 +177,15 @@ namespace QuantFloww.API.Controllers
                 if (item.Stock == null) continue;
 
                 var stock = item.Stock;
-                var cachedUpdate = await _cacheService.GetAsync<dynamic>($"stock:{stock.Symbol}");
+                var cachedUpdate = await _cacheService.GetAsync<StockPriceCachePayload>($"stock:{stock.Symbol}");
 
                 decimal price = stock.Price;
                 DateTime lastUpdated = stock.LastUpdated;
 
                 if (cachedUpdate != null)
                 {
-                    try
-                    {
-                        var element = (JsonElement)cachedUpdate;
-                        price = element.GetProperty("price").GetDecimal();
-                        lastUpdated = element.GetProperty("lastUpdated").GetDateTime();
-                    }
-                    catch { }
+                    price = cachedUpdate.Price;
+                    lastUpdated = cachedUpdate.LastUpdated;
                 }
 
                 decimal change = price - stock.PrevClose;

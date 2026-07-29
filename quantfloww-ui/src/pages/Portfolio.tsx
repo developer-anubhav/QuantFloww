@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useSignalR } from '../hooks/useSignalR';
-import { Briefcase, ArrowUpRight, ArrowDownRight, DollarSign, Activity, History, ShoppingBag, Loader2 } from 'lucide-react';
+import { Briefcase, ArrowUpRight, ArrowDownRight, Activity, History, ShoppingBag, Loader2 } from 'lucide-react';
 
 interface PositionData {
   id: string;
@@ -59,7 +59,7 @@ export const Portfolio: React.FC = () => {
   });
 
   // Fetch user portfolio
-  const { data: initialPortfolio, isLoading, isError } = useQuery<PortfolioData>({
+  const { data: initialPortfolio, isLoading } = useQuery<PortfolioData>({
     queryKey: ['portfolio'],
     queryFn: async () => {
       const response = await api.get('/portfolio');

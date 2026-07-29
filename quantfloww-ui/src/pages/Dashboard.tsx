@@ -193,7 +193,7 @@ export const Dashboard: React.FC = () => {
       <div className="p-6 text-center max-w-md mx-auto">
         <h3 className="text-lg font-bold text-rose-500">Error loading dashboard</h3>
         <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-2">
-          Make sure the backend API is running at http://localhost:5280.
+          Make sure the backend API is running and reachable.
         </p>
       </div>
     );

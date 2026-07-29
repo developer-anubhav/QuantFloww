@@ -91,12 +91,17 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// CORS Policy setup for local development UI connection
+// CORS Policy setup
+var allowedOriginsSetting = builder.Configuration["CorsSettings:AllowedOrigins"];
+var allowedOrigins = !string.IsNullOrEmpty(allowedOriginsSetting)
+    ? allowedOriginsSetting.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    : new[] { "http://localhost:5173", "http://localhost:3000" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:3000") // Vite defaults
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using QuantFloww.Application.Common.Interfaces;
 using QuantFloww.Domain.Entities;
 using QuantFloww.Infrastructure.Persistence;
+using QuantFloww.Application.DTOs;
 
 namespace QuantFloww.Infrastructure.RealTime
 {
@@ -122,7 +123,7 @@ namespace QuantFloww.Infrastructure.RealTime
                     decimal change = stock.Price - stock.PrevClose;
                     decimal changePercent = stock.PrevClose > 0 ? (change / stock.PrevClose) * 100 : 0;
 
-                    var updatePayload = new
+                    var updatePayload = new StockPriceCachePayload
                     {
                         Symbol = stock.Symbol,
                         Price = stock.Price,

@@ -33,4 +33,17 @@ namespace QuantFloww.Application.DTOs
         public decimal Close { get; set; }
         public long Volume { get; set; }
     }
+
+    public class StockPriceCachePayload
+    {
+        public string Symbol { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+        public decimal Open { get; set; }
+        public decimal High { get; set; }
+        public decimal Low { get; set; }
+        public long Volume { get; set; }
+        public decimal Change { get; set; }
+        public decimal ChangePercent { get; set; }
+        public DateTime LastUpdated { get; set; }
+    }
 }

@@ -6,7 +6,7 @@ import { useSignalR } from '../hooks/useSignalR';
 import { StockChart } from '../components/StockChart';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
-import { ArrowLeft, Plus, Check, Loader2, AlertCircle, ShoppingBag, DollarSign, Activity } from 'lucide-react';
+import { ArrowLeft, Plus, Check, Loader2, AlertCircle, ShoppingBag } from 'lucide-react';
 import { OrderBook } from '../components/OrderBook';
 import { MarginCalculator } from '../components/MarginCalculator';
 

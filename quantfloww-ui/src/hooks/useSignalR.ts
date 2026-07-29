@@ -21,8 +21,9 @@ export const useSignalR = (
   useEffect(() => {
     const token = localStorage.getItem('token') || '';
     
+    const hubUrl = import.meta.env.VITE_WS_BASE_URL || 'http://localhost:5280/hubs/marketdata';
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5280/hubs/marketdata', {
+      .withUrl(hubUrl, {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()
