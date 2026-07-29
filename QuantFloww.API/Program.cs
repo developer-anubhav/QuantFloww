@@ -93,9 +93,16 @@ builder.Services.AddAuthentication(options =>
 
 // CORS Policy setup
 var allowedOriginsSetting = builder.Configuration["CorsSettings:AllowedOrigins"];
+Console.WriteLine($"[CORS CONFIG] CorsSettings:AllowedOrigins from configuration: '{allowedOriginsSetting}'");
+
 var allowedOrigins = !string.IsNullOrEmpty(allowedOriginsSetting)
     ? allowedOriginsSetting.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
     : new[] { "http://localhost:5173", "http://localhost:3000" };
+
+foreach (var origin in allowedOrigins)
+{
+    Console.WriteLine($"[CORS CONFIG] Allowed Origin: '{origin}'");
+}
 
 builder.Services.AddCors(options =>
 {
@@ -104,9 +111,23 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(allowedOrigins)
               .SetIsOriginAllowed(origin =>
               {
-                  var host = new Uri(origin).Host;
-                  return host.Equals("localhost", StringComparison.OrdinalIgnoreCase) || 
-                         host.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase);
+                  if (string.IsNullOrEmpty(origin)) return false;
+
+                  // Allow localhost
+                  if (origin.StartsWith("http://localhost:", StringComparison.OrdinalIgnoreCase) || 
+                      origin.Equals("http://localhost", StringComparison.OrdinalIgnoreCase))
+                  {
+                      return true;
+                  }
+
+                  // Allow any vercel.app subdomain
+                  if (origin.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase))
+                  {
+                      return true;
+                  }
+
+                  // Check if it matches configured origins
+                  return allowedOrigins.Any(o => origin.Equals(o, StringComparison.OrdinalIgnoreCase));
               })
               .AllowAnyHeader()
               .AllowAnyMethod()
