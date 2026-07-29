@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "gP7htH0bVCg=",
+  "dgSpecHash": "uhJJDhBXpWY=",
   "success": true,
   "projectFilePath": "C:\\Code\\QuantFloww\\QuantFloww.Infrastructure\\QuantFloww.Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -52,6 +52,8 @@
     "C:\\Users\\Anubhav\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
     "C:\\Users\\Anubhav\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\Anubhav\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\Anubhav\\.nuget\\packages\\npgsql\\8.0.4\\npgsql.8.0.4.nupkg.sha512",
+    "C:\\Users\\Anubhav\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.8\\npgsql.entityframeworkcore.postgresql.8.0.8.nupkg.sha512",
     "C:\\Users\\Anubhav\\.nuget\\packages\\respite\\3.0.17\\respite.3.0.17.nupkg.sha512",
     "C:\\Users\\Anubhav\\.nuget\\packages\\stackexchange.redis\\3.0.17\\stackexchange.redis.3.0.17.nupkg.sha512",
     "C:\\Users\\Anubhav\\.nuget\\packages\\system.codedom\\4.4.0\\system.codedom.4.4.0.nupkg.sha512",

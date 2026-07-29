@@ -1,21 +1,22 @@
 version: '3.8'
 
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+  postgres:
+    image: postgres:alpine
     container_name: quantfloww-db-prod
     restart: always
     environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=QuantFloww@Anubhav123!
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: QuantFlowwPassword123!
+      POSTGRES_DB: quantfloww_db
     ports:
-      - "1433:1433"
+      - "5432:5432"
     volumes:
-      - sqlserver-prod-data:/var/opt/mssql
+      - postgres-prod-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "QuantFloww@Anubhav123!", "-Q", "SELECT 1", "-C"]
-      interval: 15s
-      timeout: 10s
+      test: ["CMD-SHELL", "pg_isready -U postgres -d quantfloww_db"]
+      interval: 10s
+      timeout: 5s
       retries: 5
 
   redis:
@@ -37,18 +38,18 @@ services:
       - "5280:5280"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=QuantFlowwDb;User Id=sa;Password=QuantFloww@Anubhav123!;MultipleActiveResultSets=true;TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=quantfloww_db;Username=postgres;Password=QuantFlowwPassword123!
       - ConnectionStrings__Redis=redis:6379
       - CorsSettings__AllowedOrigins=http://localhost:5173,https://your-production-frontend-domain.com
       - JwtSettings__Secret=QuantFlowwSuperSecretKeyForProductionPhase56789012345!
       - JwtSettings__Issuer=QuantFlowwAPI
       - JwtSettings__Audience=QuantFlowwClient
     depends_on:
-      sqlserver:
+      postgres:
         condition: service_healthy
       redis:
         condition: service_started
 
 volumes:
-  sqlserver-prod-data:
+  postgres-prod-data:
   redis-prod-data:

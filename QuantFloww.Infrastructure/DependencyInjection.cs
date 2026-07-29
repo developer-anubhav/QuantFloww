@@ -20,10 +20,10 @@ namespace QuantFloww.Infrastructure
         {
             // Database connection
             var connectionString = configuration.GetConnectionString("DefaultConnection") 
-                ?? "Server=(localdb)\\MSSQLLocalDB;Database=QuantFlowwDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+                ?? "Host=localhost;Database=quantfloww_db;Username=postgres;Password=postgres";
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseNpgsql(connectionString));
 
             // Identity Configurations
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>

@@ -161,3 +161,5 @@ C:\Code\QuantFloww\QuantFloww.API\obj\Debug\net8.0\QuantFloww.API.genruntimeconf
 C:\Code\QuantFloww\QuantFloww.API\obj\Debug\net8.0\ref\QuantFloww.API.dll
 C:\Code\QuantFloww\QuantFloww.API\obj\Debug\net8.0\QuantFloww.API.sourcelink.json
 C:\Code\QuantFloww\QuantFloww.API\bin\Debug\net8.0\appsettings.Production.json
+C:\Code\QuantFloww\QuantFloww.API\bin\Debug\net8.0\Npgsql.dll
+C:\Code\QuantFloww\QuantFloww.API\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
