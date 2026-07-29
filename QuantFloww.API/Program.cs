@@ -102,6 +102,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", policy =>
     {
         policy.WithOrigins(allowedOrigins)
+              .SetIsOriginAllowed(origin =>
+              {
+                  var host = new Uri(origin).Host;
+                  return host.Equals("localhost", StringComparison.OrdinalIgnoreCase) || 
+                         host.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase);
+              })
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

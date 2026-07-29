@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QuantFloww.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f13b9e020de0ccb45d56a4f918fb01beea7c17d0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2cf5fb9642841784189f0c070ec3ff1bd7bf5540")]
 [assembly: System.Reflection.AssemblyProductAttribute("QuantFloww.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QuantFloww.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
