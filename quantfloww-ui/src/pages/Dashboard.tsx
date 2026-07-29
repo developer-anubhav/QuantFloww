@@ -181,7 +181,7 @@ export const Dashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[500px]">
+      <div className="flex flex-col items-center justify-center min-h-125">
         <Loader2 className="w-10 h-10 animate-spin text-blue-500 mb-2" />
         <p className="text-zinc-500 dark:text-zinc-400 text-sm">Loading market console...</p>
       </div>
@@ -257,7 +257,7 @@ export const Dashboard: React.FC = () => {
                       <span className="text-[10px] text-zinc-400 dark:text-zinc-500 ml-2 uppercase font-semibold">
                         {stock.exchange}
                       </span>
-                      <p className="text-[10.5px] text-zinc-500 dark:text-zinc-400 truncate max-w-[180px]">{stock.name}</p>
+                      <p className="text-[10.5px] text-zinc-500 dark:text-zinc-400 truncate max-w-45">{stock.name}</p>
                     </div>
                     <div className="text-right">
                       <span className="font-mono text-xs font-bold text-zinc-950 dark:text-zinc-100">
@@ -405,7 +405,7 @@ export const Dashboard: React.FC = () => {
                 >
                   <div>
                     <span className="font-extrabold text-zinc-950 dark:text-zinc-50 font-mono">{stock.symbol}</span>
-                    <p className="text-xs text-zinc-400 dark:text-zinc-500 truncate max-w-[150px]">{stock.name}</p>
+                    <p className="text-xs text-zinc-400 dark:text-zinc-500 truncate max-w-37.5">{stock.name}</p>
                   </div>
                   <div className="text-right">
                     <span className="font-mono text-sm font-black text-zinc-950 dark:text-zinc-50">{stock.price.toFixed(2)}</span>
@@ -431,7 +431,7 @@ export const Dashboard: React.FC = () => {
                 >
                   <div>
                     <span className="font-extrabold text-zinc-950 dark:text-zinc-50 font-mono">{stock.symbol}</span>
-                    <p className="text-xs text-zinc-400 dark:text-zinc-500 truncate max-w-[150px]">{stock.name}</p>
+                    <p className="text-xs text-zinc-400 dark:text-zinc-500 truncate max-w-37.5">{stock.name}</p>
                   </div>
                   <div className="text-right">
                     <span className="font-mono text-sm font-black text-zinc-950 dark:text-zinc-50">{stock.price.toFixed(2)}</span>
