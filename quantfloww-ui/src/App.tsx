@@ -40,9 +40,7 @@ function App() {
           {/* Logo */}
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-2 text-zinc-950 dark:text-zinc-50 font-black tracking-tighter text-lg">
-              <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white font-extrabold text-sm">
-                Q
-              </div>
+              <img src="/quantfloww.png" alt="QuantFloww Logo" className="w-7 h-7 rounded-lg" />
               QuantFloww
             </Link>
 
